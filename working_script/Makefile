@@ -45,7 +45,7 @@ docekr_image_clean:
 clear_whole_progrme: docker_clean docker_volume_clean docekr_image_clean
 	@python3 clean_all_apps_migrations_folders.py 
 
-# 
+# 刪除目前所有image，因為是預設操作，加入額外告警提示，避免誤刪
 remove_all_image:
 	@read -p "警告：執行 'docker rmi -f $$(docker images -aq)' 將刪除所有 Docker 映像檔。這個操作無法還原。您確定要繼續嗎？ [y/N] " choice; \
 	if [[ $$choice =~ ^[Yy]$$ ]]; then \
