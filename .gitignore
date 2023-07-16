@@ -1,0 +1,6 @@
+# python 衍伸檔忽略檔案
+__pycache__/
+*.py[cod]
+*$py.class
+
+.DS_Store
