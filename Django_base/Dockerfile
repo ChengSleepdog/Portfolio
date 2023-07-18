@@ -20,6 +20,10 @@ RUN pip install -r requirements.txt
 
 # 複製正個目錄到容器中
 COPY . .
+COPY .env .env
+
+# set API_ENVIRONMENT，./setting 才能引入正確的 config 檔案
+RUN export API_ENVIRONMENT=dev
 
 # 運行 Django 服務
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
