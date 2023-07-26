@@ -8,6 +8,7 @@ Dockerfile_fastapi = Dockerfile
 TESTING_PROGRAME = test_db
 # SETTING_FILE = docker-deploy-database-redis.yml # 本地
 SETTING_FILE = docker-compose.yaml # docker 
+ENV_FILE = .env
 # === SSL Scripts ===
 CA_KEY = SSL/ca.key
 CA_CRT = SSL/ca.crt
@@ -44,9 +45,15 @@ remove_all_image:
 docker_build:
 	@docker build -f $(Dockerfile_fastapi) .
 docker_init: docker_build
-	@docker-compose -f $(SETTING_FILE) up -d
+	@docker-compose --env-file $(ENV_FILE) -f $(SETTING_FILE) up -d
 
-reset_db: 
+# 初始化資料庫
+begging_db:
+	@python3 manage.py makemigrations 
+	@python3 manage.py migrate 
+
+# 測試時針對特定資料庫重啟
+reset_single_db: 
 	@python3 manage.py migrate $(TESTING_PROGRAME) zero
 	@python3 manage.py makemigrations $(TESTING_PROGRAME)
 	@python3 manage.py migrate $(TESTING_PROGRAME)
@@ -60,6 +67,10 @@ venv_build: remove_poetry_venv
 	@poetry init 
 	@poetry add $$(cat requirements.txt)
 	@poetry shell
+
+# 手動建立admin
+create_superuser:
+	@python3 manage.py createsuperuser
 
 # 快速建立資料庫admin使用者 
 oneline_create_super_user:

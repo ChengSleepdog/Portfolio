@@ -17,7 +17,7 @@ with open(logger_config_file, "r") as config_file:
 # ENVIRONMENT = os.getenv("API_ENVIRONMENT", "test_in_localhost")
 
 # apply config!!!
-DJANGO_CONF_MODULE = "config.{env}".format(env=ENVIRONMENT)
+DJANGO_CONF_MODULE = "config.{env}".format(env=ENVIRONMENT)# 引入 config.{configuration}
 
 try:
     _module = __import__(DJANGO_CONF_MODULE, globals(), locals(), ["*"])

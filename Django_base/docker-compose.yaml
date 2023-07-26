@@ -1,9 +1,50 @@
 version: '3'
 
 services:
-  web:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - proxy
+  
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    hostname: ${DB_HOST}
+    environment:
+      - POSTGRES_DB=${DB_NAME} # DB name
+      - POSTGRES_USER=${DB_USER} # Superuser name
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD} # Superuser password
+      - TZ=${TIME_ZONE}
+    ports:
+      - "5432:5432"
+    # volumes:
+    #   - pgdata:/var/lib/postgresql/data/
+    networks:
+      - proxy
+
+  django:
+    restart: always
     build: 
       context: .
       dockerfile: Dockerfile
+    container_name: django_web
     ports:
-      - 8000:8000
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    # 同步內容
+    # volumes:
+    #   - .:/web
+    command: python3 manage.py runserver 0.0.0.0:8000
+    networks:
+      - proxy
+
+# volumes:
+#   pgdata:
+
+networks:
+  proxy:
